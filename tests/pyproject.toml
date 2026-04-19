@@ -1,0 +1,10 @@
+[project]
+name = "test-folder"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.10"
+dependencies = [
+    "bedrock-agentcore-starter-toolkit>=0.1.27",
+    "boto3>=1.40.62",
+    "requests>=2.32.5",
+]

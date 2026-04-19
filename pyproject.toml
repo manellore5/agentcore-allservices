@@ -1,0 +1,32 @@
+[project]
+name = "mastering-amazon-bedrock-agentcore"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "bedrock-agentcore>=1.0.6",
+    "bedrock-agentcore-starter-toolkit>=0.3.4",
+    "boto3>=1.42.80",
+    "fastapi>=0.124.0",
+    "google-api-python-client>=2.187.0",
+    "google-auth-httplib2>=0.2.1",
+    "google-auth-oauthlib>=1.2.3",
+    "ipykernel>=7.1.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.7",
+    "nest-asyncio>=1.6.0",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "playwright>=1.57.0",
+    "pickleshare>=0.7.5",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "seaborn>=0.13.2",
+    "selenium>=4.38.0",
+    "strands-agents>=1.17.0",
+    "strands-agents-tools>=0.2.17",
+    "structlog>=25.5.0",
+    "watchtower>=3.4.0",
+]

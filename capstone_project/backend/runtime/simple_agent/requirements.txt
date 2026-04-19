@@ -1,0 +1,10 @@
+# Core Amazon Bedrock AgentCore dependencies
+bedrock-agentcore>=1.0.5
+bedrock-agentcore-starter-toolkit>=0.1.27
+
+# AWS SDK and utilities
+boto3>=1.40.62
+python-dotenv>=1.2.1
+
+# Agent framework
+strands-agents>=1.14.0

@@ -1,0 +1,731 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Aviationstack API",
+        "description": "The Aviationstack API was built to provide a simple way of accessing global aviation data for real-time, historical flights, and future flights as well as allow customers to tap into an extensive data set of airline routes and other up-to-date aviation-related information. Requests to the REST API are made using a straightforward HTTP GET URL structure and responses are provided in lightweight JSON format.\n",
+        "contact": {
+            "name": "Aviationstack Documentation"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.aviationstack.com/v1",
+            "description": "Main Aviationstack API server"
+        }
+    ],
+    "security": [
+        {
+            "AviationstackApiKey": []
+        }
+    ],
+    "paths": {
+        "/flights": {
+            "get": {
+                "summary": "Flights",
+                "description": "The Flights endpoint is capable of tracking flights and retrieving flight status information in real-time. In order to look up real-time information about one or multiple flights, you can use the API's Flights endpoint together with optional parameters to filter your result set.\n",
+                "operationId": "getFlights",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/limit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/offset"
+                    },
+                    {
+                        "$ref": "#/components/parameters/flight_date"
+                    },
+                    {
+                        "$ref": "#/components/parameters/flight_status"
+                    },
+                    {
+                        "$ref": "#/components/parameters/dep_iata"
+                    },
+                    {
+                        "$ref": "#/components/parameters/arr_iata"
+                    },
+                    {
+                        "$ref": "#/components/parameters/dep_icao"
+                    },
+                    {
+                        "$ref": "#/components/parameters/arr_icao"
+                    },
+                    {
+                        "$ref": "#/components/parameters/airline_name"
+                    },
+                    {
+                        "$ref": "#/components/parameters/airline_iata"
+                    },
+                    {
+                        "$ref": "#/components/parameters/airline_icao"
+                    },
+                    {
+                        "$ref": "#/components/parameters/flight_number"
+                    },
+                    {
+                        "$ref": "#/components/parameters/flight_iata"
+                    },
+                    {
+                        "$ref": "#/components/parameters/flight_icao"
+                    },
+                    {
+                        "$ref": "#/components/parameters/min_delay_dep"
+                    },
+                    {
+                        "$ref": "#/components/parameters/min_delay_arr"
+                    },
+                    {
+                        "$ref": "#/components/parameters/max_delay_dep"
+                    },
+                    {
+                        "$ref": "#/components/parameters/max_delay_arr"
+                    },
+                    {
+                        "$ref": "#/components/parameters/arr_scheduled_time_arr"
+                    },
+                    {
+                        "$ref": "#/components/parameters/dep_scheduled_time_dep"
+                    },
+                    {
+                        "$ref": "#/components/parameters/callback"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flight list (pagination + flights array)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FlightListResponse"
+                                }
+                            }
+                        }
+                    },
+                    "4XX": {
+                        "description": "Client error (see ErrorResponse)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Pagination": {
+                "type": "object",
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Requested limit per page.",
+                        "example": 100
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "description": "Requested offset.",
+                        "example": 0
+                    },
+                    "count": {
+                        "type": "integer",
+                        "description": "Number of returned results on this page.",
+                        "example": 100
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "Total number of results matching the query.",
+                        "example": 1669022
+                    }
+                }
+            },
+            "DepartureArrivalBase": {
+                "type": "object",
+                "properties": {
+                    "airport": {
+                        "type": "string",
+                        "description": "Airport name"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "description": "IANA timezone string"
+                    },
+                    "iata": {
+                        "type": "string",
+                        "description": "IATA code"
+                    },
+                    "icao": {
+                        "type": "string",
+                        "description": "ICAO code"
+                    },
+                    "terminal": {
+                        "type": "string",
+                        "description": "Terminal (if available)"
+                    },
+                    "gate": {
+                        "type": "string",
+                        "description": "Gate number (if available)"
+                    },
+                    "delay": {
+                        "type": "integer",
+                        "description": "Delay in minutes"
+                    },
+                    "scheduled": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Scheduled time"
+                    },
+                    "estimated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Estimated time (if available)"
+                    },
+                    "actual": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Actual time (if available)"
+                    },
+                    "estimated_runway": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Estimated runway time (if available)"
+                    },
+                    "actual_runway": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Actual runway time (if available)"
+                    },
+                    "baggage": {
+                        "type": "string",
+                        "description": "Baggage claim info (if available)"
+                    }
+                }
+            },
+            "Airline": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Internal airline id"
+                    },
+                    "fleet_average_age": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Fleet average age (if available)"
+                    },
+                    "airline_id": {
+                        "type": "string",
+                        "description": "Internal airline id (present on some responses)."
+                    },
+                    "callsign": {
+                        "type": "string",
+                        "description": "Airline callsign"
+                    },
+                    "hub_code": {
+                        "type": "string",
+                        "description": "Hub code associated with the airline.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "iata_code": {
+                        "type": "string",
+                        "description": "IATA code"
+                    },
+                    "icao_code": {
+                        "type": "string",
+                        "description": "ICAO code"
+                    },
+                    "country_iso2": {
+                        "type": "string",
+                        "description": "Country ISO2 code"
+                    },
+                    "date_founded": {
+                        "type": "string",
+                        "description": "Airline founding date (if available)"
+                    },
+                    "iata_prefix_accounting": {
+                        "type": "string",
+                        "description": "IATA prefix accounting number (if available)"
+                    },
+                    "airline_name": {
+                        "type": "string",
+                        "description": "Airline name"
+                    },
+                    "country_name": {
+                        "type": "string",
+                        "description": "Country name"
+                    },
+                    "fleet_size": {
+                        "type": "integer",
+                        "description": "Fleet size (if available)"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Airline status (e.g., 'active')"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Airline type (e.g., 'carrier')"
+                    }
+                }
+            },
+            "FlightInfo": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "string",
+                        "description": "Flight number"
+                    },
+                    "iata": {
+                        "type": "string",
+                        "description": "Flight IATA code"
+                    },
+                    "icao": {
+                        "type": "string",
+                        "description": "Flight ICAO code"
+                    },
+                    "codeshared": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "Codeshare information or null"
+                    }
+                }
+            },
+            "Aircraft": {
+                "type": "object",
+                "properties": {
+                    "registration": {
+                        "type": "string",
+                        "description": "Aircraft registration number"
+                    },
+                    "iata": {
+                        "type": "string",
+                        "description": "Aircraft IATA code"
+                    },
+                    "icao": {
+                        "type": "string",
+                        "description": "Aircraft ICAO code"
+                    },
+                    "icao24": {
+                        "type": "string",
+                        "description": "Aircraft ICAO24 hex code"
+                    }
+                }
+            },
+            "Live": {
+                "type": "object",
+                "properties": {
+                    "updated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last updated timestamp"
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Latitude coordinate"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Longitude coordinate"
+                    },
+                    "altitude": {
+                        "type": "number",
+                        "description": "Altitude in meters"
+                    },
+                    "direction": {
+                        "type": "number",
+                        "description": "Heading in degrees"
+                    },
+                    "speed_horizontal": {
+                        "type": "number",
+                        "description": "Horizontal speed (km/h)"
+                    },
+                    "speed_vertical": {
+                        "type": "number",
+                        "description": "Vertical speed (km/h)"
+                    },
+                    "is_ground": {
+                        "type": "boolean",
+                        "description": "Is the aircraft on the ground?"
+                    }
+                }
+            },
+            "Flight": {
+                "type": "object",
+                "properties": {
+                    "flight_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Flight date (YYYY-MM-DD)"
+                    },
+                    "flight_status": {
+                        "type": "string",
+                        "description": "Flight status",
+                        "enum": [
+                            "scheduled",
+                            "active",
+                            "landed",
+                            "cancelled",
+                            "incident",
+                            "diverted"
+                        ]
+                    },
+                    "departure": {
+                        "$ref": "#/components/schemas/DepartureArrivalBase"
+                    },
+                    "arrival": {
+                        "$ref": "#/components/schemas/DepartureArrivalBase"
+                    },
+                    "airline": {
+                        "$ref": "#/components/schemas/Airline"
+                    },
+                    "flight": {
+                        "$ref": "#/components/schemas/FlightInfo"
+                    },
+                    "aircraft": {
+                        "$ref": "#/components/schemas/Aircraft"
+                    },
+                    "live": {
+                        "$ref": "#/components/schemas/Live"
+                    }
+                }
+            },
+            "FlightListResponse": {
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/Pagination"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Flight"
+                        }
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "Short error code (e.g., invalid_access_key, validation_error).",
+                                "example": "invalid_access_key"
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "Human readable error message.",
+                                "example": "An access_key must be supplied"
+                            },
+                            "context": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "key": {
+                                                "type": "string"
+                                            },
+                                            "message": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "description": "For validation errors, a context object with per-field entries."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "limit": {
+                "name": "limit",
+                "in": "query",
+                "description": "Number of results per page. Default 100. Maximum depends on plan (100 below Professional; 1000 on and above Professional). See docs for exact limits.\n",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "default": 100,
+                    "minimum": 1
+                }
+            },
+            "offset": {
+                "name": "offset",
+                "in": "query",
+                "description": "Pagination offset. Use with `limit` for paging through results.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0
+                }
+            },
+            "callback": {
+                "name": "callback",
+                "in": "query",
+                "description": "Optional JSONP callback function name; if provided, response is wrapped for JSONP.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "search": {
+                "name": "search",
+                "in": "query",
+                "description": "Free-text search / autocomplete (available on paid plans for certain endpoints).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "flight_date": {
+                "name": "flight_date",
+                "in": "query",
+                "description": "Historical flight date in YYYY-MM-DD format. \n    \n**Note:** Aviationstack provides historical data for the last 3 months only.\n\n **Note:** The API response returned for historical flights is identical to the API response returned for real-time flight data. To see the API response, please jump to the Real-Time Flights section.\n",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            },
+            "flight_status": {
+                "name": "flight_status",
+                "in": "query",
+                "description": "Filter by flight status; allowed values: scheduled, active, landed, cancelled, incident, diverted.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "scheduled",
+                        "active",
+                        "landed",
+                        "cancelled",
+                        "incident",
+                        "diverted"
+                    ]
+                }
+            },
+            "dep_iata": {
+                "name": "dep_iata",
+                "in": "query",
+                "description": "Filter by departure IATA code (e.g., SFO).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "arr_iata": {
+                "name": "arr_iata",
+                "in": "query",
+                "description": "Filter by arrival IATA code (e.g., DFW).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "dep_icao": {
+                "name": "dep_icao",
+                "in": "query",
+                "description": "Filter by departure ICAO code (e.g., KSFO).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "arr_icao": {
+                "name": "arr_icao",
+                "in": "query",
+                "description": "Filter by arrival ICAO code (e.g., KDFW).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "airline_name": {
+                "name": "airline_name",
+                "in": "query",
+                "description": "Filter by airline name.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "airline_iata": {
+                "name": "airline_iata",
+                "in": "query",
+                "description": "Filter by airline IATA code.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "airline_icao": {
+                "name": "airline_icao",
+                "in": "query",
+                "description": "Filter by airline ICAO code.",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "flight_number": {
+                "name": "flight_num",
+                "in": "query",
+                "description": "Filter by flight number (numeric or string).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "flight_iata": {
+                "name": "flight_iata",
+                "in": "query",
+                "description": "Filter by flight IATA (e.g., AA1004).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "flight_icao": {
+                "name": "flight_icao",
+                "in": "query",
+                "description": "Filter by flight ICAO (e.g., AAL1004).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "min_delay_dep": {
+                "name": "min_delay_dep",
+                "in": "query",
+                "description": "Filter by minimum departure delay (minutes).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            },
+            "min_delay_arr": {
+                "name": "min_delay_arr",
+                "in": "query",
+                "description": "Filter by minimum arrival delay (minutes).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            },
+            "max_delay_dep": {
+                "name": "max_delay_dep",
+                "in": "query",
+                "description": "Filter by maximum departure delay (minutes).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            },
+            "max_delay_arr": {
+                "name": "max_delay_arr",
+                "in": "query",
+                "description": "Filter by maximum arrival delay (minutes).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            },
+            "arr_scheduled_time_arr": {
+                "name": "arr_scheduled_time_arr",
+                "in": "query",
+                "description": "Filter flights by arrival scheduled date (YYYY-MM-DD).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            },
+            "dep_scheduled_time_dep": {
+                "name": "dep_scheduled_time_dep",
+                "in": "query",
+                "description": "Filter flights by departure scheduled date (YYYY-MM-DD).",
+                "required": false,
+                "style": "form",
+                "explode": true,
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
+        "securitySchemes": {
+            "AviationstackApiKey": {
+                "type": "apiKey",
+                "description": "Your Aviationstack access key (query parameter `access_key`).",
+                "name": "access_key",
+                "in": "query"
+            }
+        }
+    }
+}

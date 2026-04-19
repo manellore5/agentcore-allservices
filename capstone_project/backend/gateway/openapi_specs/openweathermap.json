@@ -1,0 +1,178 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OpenWeatherMap API",
+    "version": "2.5",
+    "description": "Weather forecasts and current conditions"
+  },
+  "servers": [
+    {
+      "url": "https://api.openweathermap.org/data/2.5"
+    }
+  ],
+  "paths": {
+    "/weather": {
+      "get": {
+        "summary": "Get current weather",
+        "operationId": "getCurrentWeather",
+        "description": "Get current weather data for a location",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "City name (e.g., Rome, Florence)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "description": "Longitude",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "units",
+            "in": "query",
+            "description": "Temperature units (standard, metric, imperial)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "metric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current weather data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "weather": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "description": { "type": "string" },
+                          "main": { "type": "string" }
+                        }
+                      }
+                    },
+                    "main": {
+                      "type": "object",
+                      "properties": {
+                        "temp": { "type": "number" },
+                        "feels_like": { "type": "number" },
+                        "humidity": { "type": "integer" }
+                      }
+                    },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/forecast": {
+      "get": {
+        "summary": "Get weather forecast",
+        "operationId": "getWeatherForecast",
+        "description": "Get 5 day weather forecast with 3-hour intervals",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "City name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "description": "Longitude",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "units",
+            "in": "query",
+            "description": "Units (metric, imperial)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "metric"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "5-day forecast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "dt_txt": { "type": "string" },
+                          "main": {
+                            "type": "object",
+                            "properties": {
+                              "temp": { "type": "number" }
+                            }
+                          },
+                          "weather": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "description": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

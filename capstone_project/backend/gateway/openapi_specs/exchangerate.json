@@ -1,0 +1,118 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ExchangeRate-API",
+    "version": "6.0",
+    "description": "Currency exchange rates"
+  },
+  "servers": [
+    {
+      "url": "https://v6.exchangerate-api.com/v6"
+    }
+  ],
+  "paths": {
+    "/{api_key}/latest/{base_currency}": {
+      "get": {
+        "summary": "Get latest exchange rates",
+        "operationId": "getExchangeRates",
+        "description": "Get latest exchange rates for a base currency",
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Your API key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "base_currency",
+            "in": "path",
+            "description": "Base currency code (e.g., USD, EUR)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange rates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": { "type": "string" },
+                    "base_code": { "type": "string" },
+                    "conversion_rates": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{api_key}/pair/{from_currency}/{to_currency}": {
+      "get": {
+        "summary": "Convert between currencies",
+        "operationId": "convertCurrency",
+        "description": "Get conversion rate between two currencies",
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "path",
+            "description": "Your API key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from_currency",
+            "in": "path",
+            "description": "Source currency code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to_currency",
+            "in": "path",
+            "description": "Target currency code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversion rate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": { "type": "string" },
+                    "base_code": { "type": "string" },
+                    "target_code": { "type": "string" },
+                    "conversion_rate": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
