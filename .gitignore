@@ -244,3 +244,6 @@ Thumbs.db
 
 # Claude Code local agent worktrees and session files
 .claude/
+
+# Deno notebook state (replaces IPython %store)
+capstone_project/notebooks/.notebook-state.json

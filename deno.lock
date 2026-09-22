@@ -9,6 +9,7 @@
     "npm:@aws-crypto/sha256-js@5.2.0": "5.2.0",
     "npm:@aws-sdk/client-bedrock-agentcore-control@3.1136.0": "3.1136.0",
     "npm:@aws-sdk/client-bedrock-agentcore@3.1136.0": "3.1136.0",
+    "npm:@aws-sdk/client-bedrock@3.1136.0": "3.1136.0",
     "npm:@aws-sdk/client-cloudwatch-logs@3.1136.0": "3.1136.0",
     "npm:@aws-sdk/client-codebuild@3.1136.0": "3.1136.0",
     "npm:@aws-sdk/client-cognito-identity-provider@3.1136.0": "3.1136.0",
@@ -135,6 +136,20 @@
         "@aws-sdk/middleware-eventstream",
         "@aws-sdk/middleware-websocket",
         "@aws-sdk/token-providers@3.1137.0",
+        "@aws-sdk/types",
+        "@smithy/core",
+        "@smithy/fetch-http-handler",
+        "@smithy/node-http-handler",
+        "@smithy/types@4.18.0",
+        "tslib@2.8.1"
+      ]
+    },
+    "@aws-sdk/client-bedrock@3.1136.0": {
+      "integrity": "sha512-7WJt7duGYkrjdfv/AuRupzK0DJ0S1C/JzDNdwCFPv3ljGqpIu3N1OGrcUrTRJhnkUQQ0F7LMt0Ubw04ZLS3LVA==",
+      "dependencies": [
+        "@aws-sdk/core",
+        "@aws-sdk/credential-provider-node",
+        "@aws-sdk/token-providers@3.1136.0",
         "@aws-sdk/types",
         "@smithy/core",
         "@smithy/fetch-http-handler",
@@ -489,6 +504,17 @@
     },
     "@aws-sdk/token-providers@3.1129.0": {
       "integrity": "sha512-Sbl3rpzQdsG4ZK2zh0JWUYyZPKKorJlVOddA2T0DVbKJFrsW8J6wgnslxxUH04+WaBMr4A1HzJZvZX0xUvkniA==",
+      "dependencies": [
+        "@aws-sdk/core",
+        "@aws-sdk/nested-clients",
+        "@aws-sdk/types",
+        "@smithy/core",
+        "@smithy/types@4.18.0",
+        "tslib@2.8.1"
+      ]
+    },
+    "@aws-sdk/token-providers@3.1136.0": {
+      "integrity": "sha512-CHjdpFszuNTUEQ2z1F85pOiHxpLe0fDyvTUoNAZ7YczdTMEfU6TSA7FVZelAM67L/g6xcS31U64HuBl42dSKCA==",
       "dependencies": [
         "@aws-sdk/core",
         "@aws-sdk/nested-clients",
@@ -1837,6 +1863,7 @@
       "npm:@aws-crypto/sha256-js@5.2.0",
       "npm:@aws-sdk/client-bedrock-agentcore-control@3.1136.0",
       "npm:@aws-sdk/client-bedrock-agentcore@3.1136.0",
+      "npm:@aws-sdk/client-bedrock@3.1136.0",
       "npm:@aws-sdk/client-cloudwatch-logs@3.1136.0",
       "npm:@aws-sdk/client-codebuild@3.1136.0",
       "npm:@aws-sdk/client-cognito-identity-provider@3.1136.0",
