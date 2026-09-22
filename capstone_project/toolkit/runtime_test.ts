@@ -117,7 +117,7 @@ Deno.test("the buildspec tags and pushes the image it just built", () => {
 
 Deno.test("the Dockerfile preloads observability and runs as the non-root user", () => {
   const dockerfile = buildDockerfile("travel_agent.ts", "2.9.7");
-  assertStringIncludes(dockerfile, "FROM denoland/deno:2.9.7");
+  assertStringIncludes(dockerfile, "FROM ghcr.io/denoland/deno:2.9.7"); // Docker Hub rate-limits CodeBuild
   assertStringIncludes(
     dockerfile,
     'CMD ["run", "-A", "--preload", "observability.ts", "travel_agent.ts"]',
@@ -139,4 +139,23 @@ Deno.test("session ids clear the runtime's 33-character minimum", () => {
   const id = generateSessionId();
   assert(id.length >= 33, `too short: ${id.length}`);
   assert(id !== generateSessionId());
+});
+
+Deno.test("isRoleNotReadyError spots the three IAM propagation failures", async () => {
+  const { isRoleNotReadyError } = await import("./runtime.ts");
+  const err = (name: string, message: string) => Object.assign(new Error(message), { name });
+
+  assert(isRoleNotReadyError(err("ValidationException", "Role validation failed for arn:...")));
+  assert(isRoleNotReadyError(err("InvalidParameterValueException", "The role cannot be assumed")));
+  // CodeBuild's own wording, seen on a live deploy
+  assert(isRoleNotReadyError(
+    err(
+      "InvalidInputException",
+      "CodeBuild is not authorized to perform: sts:AssumeRole on service role",
+    ),
+  ));
+
+  assert(!isRoleNotReadyError(err("AccessDeniedException", "not authorized")));
+  assert(!isRoleNotReadyError(err("ResourceAlreadyExistsException", "exists")));
+  assert(!isRoleNotReadyError(undefined));
 });

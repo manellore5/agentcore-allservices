@@ -385,9 +385,15 @@ phases:
  *
  * `--preload` loads the shared observability module before the agent, which is how telemetry stays
  * out of agent code (the Python toolkit's equivalent is the `opentelemetry-instrument` prefix).
+ *
+ * The base image comes from ghcr.io rather than Docker Hub: a live CodeBuild run was refused with
+ * "429 Too Many Requests" pulling `denoland/deno` from Docker Hub, whose anonymous pulls are rate
+ * limited per source IP, and CodeBuild's IPs are shared.
  */
+export const DENO_IMAGE_REGISTRY = "ghcr.io/denoland/deno";
+
 export function buildDockerfile(entrypoint: string, denoVersion: string): string {
-  return `FROM denoland/deno:${denoVersion}
+  return `FROM ${DENO_IMAGE_REGISTRY}:${denoVersion}
 WORKDIR /app
 COPY deno.json* deno.lock* ./
 COPY . .
@@ -412,6 +418,44 @@ export const IGNORED_SOURCE_ENTRIES = [
 
 export function shouldIgnoreSourceEntry(name: string): boolean {
   return IGNORED_SOURCE_ENTRIES.includes(name) || name.endsWith(".pyc");
+}
+
+/**
+ * Retries an AWS call that fails only because a just-created IAM role has not propagated yet.
+ *
+ * Ported from the Python toolkit's `retry_create_with_eventual_iam_consistency`, widened to cover
+ * CodeBuild's own wording ("not authorized to perform: sts:AssumeRole"), which a live run hit when
+ * creating the build project immediately after the role.
+ */
+export function isRoleNotReadyError(error: unknown): boolean {
+  const name = (error as Error)?.name ?? "";
+  const message = (error as Error)?.message ?? "";
+  return (
+    (name === "ValidationException" && message.includes("Role validation failed")) ||
+    (name === "InvalidParameterValueException" && message.includes("cannot be assumed")) ||
+    (name === "InvalidInputException" && message.includes("sts:AssumeRole"))
+  );
+}
+
+async function withIamConsistencyRetry<T>(
+  operation: () => Promise<T>,
+  logger: Logger,
+  maxRetries = 5,
+): Promise<T> {
+  for (let attempt = 0;; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (!isRoleNotReadyError(error) || attempt === maxRetries) throw error;
+      const wait = Math.min(5000 * 2 ** attempt, 15000);
+      logger.info(
+        `IAM role not ready to be assumed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${
+          wait / 1000
+        }s...`,
+      );
+      await delay(wait);
+    }
+  }
 }
 
 // --- the class ---
@@ -715,14 +759,17 @@ export class Runtime {
       },
       serviceRole,
     };
-    try {
-      await codebuild.send(new CreateProjectCommand(project));
-      this.logger.info(`Created CodeBuild project ${projectName}`);
-    } catch (error) {
-      if ((error as Error).name !== "ResourceAlreadyExistsException") throw error;
-      await codebuild.send(new UpdateProjectCommand(project));
-      this.logger.info(`Updated CodeBuild project ${projectName}`);
-    }
+    // A role created moments ago may not be assumable yet, so both paths retry.
+    await withIamConsistencyRetry(async () => {
+      try {
+        await codebuild.send(new CreateProjectCommand(project));
+        this.logger.info(`Created CodeBuild project ${projectName}`);
+      } catch (error) {
+        if ((error as Error).name !== "ResourceAlreadyExistsException") throw error;
+        await codebuild.send(new UpdateProjectCommand(project));
+        this.logger.info(`Updated CodeBuild project ${projectName}`);
+      }
+    }, this.logger);
   }
 
   private async runBuild(
@@ -934,6 +981,9 @@ function repoRoot(): string {
  *    agent folders are flat and hold only an entrypoint, a config and helper files.
  * 6. Local container runtimes are not supported: `container_runtime` and the local `docker build`
  *    path are dropped, because learners are not required to have Docker.
- * 7. Not ported (no call site in the course): `destroy`, `stop_session`, VPC configuration, memory
+ * 7. The image base is pulled from ghcr.io, because Docker Hub rate-limited a live CodeBuild run.
+ * 8. IAM eventual consistency is handled by `withIamConsistencyRetry`, widened from the Python
+ *    helper to cover CodeBuild's "not authorized to perform: sts:AssumeRole", which a live run hit.
+ * 9. Not ported (no call site in the course): `destroy`, `stop_session`, VPC configuration, memory
  *    auto-provisioning (`memory_mode`), request-header configuration, and the CLI-only prompts.
  */
