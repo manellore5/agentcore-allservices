@@ -17,7 +17,7 @@
  */
 
 export { MemoryClient } from "./memory.ts";
-export type { EventMessage } from "./memory.ts";
+export type { EventMessage, MemoryStrategyDict, StrategyConfigInput } from "./memory.ts";
 export { DEFAULT_NAMESPACES, MemoryStatus, MessageRole, StrategyType } from "./memory.ts";
 
 export { IdentityClient } from "./identity.ts";
