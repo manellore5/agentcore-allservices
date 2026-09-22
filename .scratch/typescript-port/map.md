@@ -39,6 +39,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Port: toolkit Runtime helper with CodeBuild deploy](issues/16-toolkit-runtime-helper-with-codebuild-deploy.md) — done: configure/launch/status/invoke with the remote CodeBuild pipeline, generated Deno Dockerfile with `--preload`, requireMMDSV2; adds jszip
 - [Port: notebook 01 and the shared notebook helper](issues/17-notebook-01-and-the-shared-notebook-helper.md) — done: `shared/notebook.ts` (state file, sh, loadEnv, writeFile) + notebook 01 on the Deno kernel; local `.ts` imports do NOT crash the kernel, so no fallback needed
 - [Port: notebook 02 and the simple agent](issues/18-notebook-02-and-the-simple-agent.md) — done and verified live (agent deployed, READY, multi-turn tested; user ran the notebook in VS Code); fixed 2 real bugs: IAM-propagation retry and ghcr.io base image after a Docker Hub 429
+- [Port: notebook 03 and the gateway backend](issues/19-notebook-03-and-the-gateway-backend.md) — done and verified live (gateway + Cognito + 3 targets created, tool call reached the upstream API); fixed the gateway role's missing workload-identity permissions, which the Python toolkit also lacks, plus 3 dead bugs in the Python scripts
 
 ## Not yet specified
 
