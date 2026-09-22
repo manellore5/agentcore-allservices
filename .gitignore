@@ -241,3 +241,6 @@ Thumbs.db
 .kiro/steering/tech.md
 .kiro/steering/product.md
 .kiro/hooks/notebook-readme-sync.kiro.hook
+
+# Claude Code local agent worktrees and session files
+.claude/
