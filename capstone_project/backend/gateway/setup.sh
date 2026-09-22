@@ -5,16 +5,18 @@
 
 echo "🚀 Setting up TravelMate Gateway environment..."
 
-# Check if uv is installed
-if ! command -v uv &> /dev/null; then
-    echo "❌ uv is not installed. Please install it first:"
-    echo "   curl -LsSf https://astral.sh/uv/install.sh | sh"
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+
+# Check if deno is installed (replaces uv + a Python virtual environment)
+if ! command -v deno &> /dev/null; then
+    echo "❌ deno is not installed. Please install it first:"
+    echo "   curl -fsSL https://deno.land/install.sh | sh"
     exit 1
 fi
 
-# Install Python dependencies
-echo "📦 Installing Python dependencies..."
-uv pip install -r requirements.txt --break-system-packages
+# Install TypeScript dependencies from the repository root's deno.json
+echo "📦 Installing TypeScript dependencies..."
+(cd "$REPO_ROOT" && deno install)
 
 # Check for API keys
 echo "🔑 Checking API key environment variables..."
@@ -23,10 +25,6 @@ missing_keys=()
 
 if [ -z "$AVIATIONSTACK_API_KEY" ]; then
     missing_keys+=("AVIATIONSTACK_API_KEY")
-fi
-
-if [ -z "$HOTELBEDS_API_KEY" ]; then
-    missing_keys+=("HOTELBEDS_API_KEY")
 fi
 
 if [ -z "$OPENWEATHERMAP_API_KEY" ]; then
@@ -45,7 +43,6 @@ if [ ${#missing_keys[@]} -gt 0 ]; then
     echo ""
     echo "API Registration Links:"
     echo "  - Aviationstack: https://aviationstack.com/signup"
-    echo "  - Hotelbeds: https://developer.hotelbeds.com/register"
     echo "  - OpenWeatherMap: https://openweathermap.org/api"
     echo "  - ExchangeRate-API: https://www.exchangerate-api.com/"
 else
@@ -57,5 +54,5 @@ echo "✅ Setup complete!"
 echo ""
 echo "Next steps:"
 echo "1. Set missing API keys (if any)"
-echo "2. Run: python gateway_setup.py"
-echo "3. Test: python test_gateway.py"
+echo "2. Run: deno task gateway:setup"
+echo "3. Test: deno run -A capstone_project/backend/gateway/test_gateway.ts"
