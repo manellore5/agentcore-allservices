@@ -22,6 +22,11 @@
       "deno.json",
       "tests/deno.json"
     ],
+    "exclude": [
+      "**/*.ipynb",
+      "capstone_project/backend/gateway/openapi_specs/**",
+      "**/environments/**"
+    ],
     "lineWidth": 100
   },
   "lint": {
