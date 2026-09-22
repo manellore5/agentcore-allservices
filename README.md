@@ -43,9 +43,9 @@ The course follows a progressive, notebook-based approach where each chapter bui
   - Amazon Cognito (for OAuth)
   - AWS Lambda (for runtime deployment)
   - CloudWatch (for monitoring)
-- **Python 3.10+** installed on your system
-- **uv package manager** - [Installation guide](https://github.com/astral-sh/uv)
-- Basic knowledge of Python and AWS concepts
+- **Deno 2.9+** - [Installation guide](https://docs.deno.com/runtime/getting_started/installation) (`setup.sh` installs the pinned version from `.deno-version` if it is missing)
+- **VS Code** with two extensions: **Jupyter** (Microsoft) and **Deno** (denoland). The notebooks run TypeScript on Deno's own Jupyter kernel, so **no Python is required**
+- Basic knowledge of TypeScript and AWS concepts
 
 ### Optional API Keys
 For full functionality, obtain free API keys from:
@@ -70,9 +70,10 @@ chmod +x setup.sh
 ```
 
 This will:
-- Initialize a Python 3.10 virtual environment
-- Install all required dependencies
-- Configure the project structure
+- Install the pinned Deno version, or check the one you already have
+- Download and cache every dependency listed in `deno.json`
+- Register the Deno Jupyter kernel, so the notebooks can run TypeScript
+- Check for the optional API keys
 
 ### 3. Configure AWS Credentials
 
@@ -103,10 +104,11 @@ AVIATIONSTACK_API_KEY=your-key-here
 
 ### 5. Start Learning
 
-```bash
-source .venv/bin/activate
-jupyter notebook capstone_project/notebooks/01-foundation.ipynb
-```
+Open the repository in VS Code, then open
+[`capstone_project/notebooks/01-foundation.ipynb`](capstone_project/notebooks/01-foundation.ipynb).
+Click **Select Kernel** in the top right, choose **Jupyter Kernel...**, and pick **Deno**.
+
+Then run the cells. There is no virtual environment to activate: Deno caches dependencies itself.
 
 ## Project Structure
 
@@ -218,7 +220,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 ### Common Issues
 
 **Issue**: `bedrock-agentcore` package not found
-- **Solution**: Ensure you're using the correct Python version (3.10+) and have run `./setup.sh`
+- **Solution**: Run `./setup.sh`, and check your Deno version matches `.deno-version` (`deno --version`)
 
 **Issue**: AWS credentials not working
 - **Solution**: Verify your IAM permissions include Bedrock access in your region
@@ -226,8 +228,11 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 **Issue**: API keys not loading
 - **Solution**: Check that your `.env` file is in the project root directory
 
-**Issue**: Jupyter kernel not found
-- **Solution**: Activate the virtual environment: `source .venv/bin/activate`
+**Issue**: Deno kernel not offered in VS Code
+- **Solution**: Install the **Jupyter** and **Deno** extensions, run `deno jupyter --install --force`, then reload VS Code
+
+**Issue**: A notebook cell cannot find a module
+- **Solution**: Run `deno install` from the project root; every dependency is pinned in `deno.json`
 
 For more issues, check the troubleshooting section in each notebook.
 
