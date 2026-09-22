@@ -153,7 +153,13 @@ if (ENABLED) {
   });
   context.setGlobalContextManager(new AsyncLocalStorageContextManager().enable());
   propagation.setGlobalPropagator(new CompositePropagator({ propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()] }));
-  trace.setGlobalTracerProvider(tracer);
+  // Strands TS names its tracer after the service name ("strands-agents" by default); AgentCore Evaluations
+  // recognises Strands spans by the Python scope name, so register it under that name.
+  const strandsScope = env("OTEL_SERVICE_NAME") || "strands-agents";
+  trace.setGlobalTracerProvider({
+    getTracer: (name, version, options) =>
+      tracer.getTracer(name === strandsScope ? "strands.telemetry.tracer" : name, version, options),
+  });
   instrumentHttpServer();
   console.log(JSON.stringify({ observability: "enabled", region: REGION }));
 }

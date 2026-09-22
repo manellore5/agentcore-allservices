@@ -9,3 +9,8 @@ Throwaway code from the ticket "Spike: OTLP logs export and --preload telemetry 
 - `agent.ts` is the agent with no telemetry code.
 - `eval.ts` runs on-demand `Evaluate` with spans from `aws/spans` plus the runtime logs, the same input the Python toolkit's `Evaluation.run` builds.
 - `online.ts` creates an online evaluation config and invokes the agent once.
+
+## Outcome
+
+- `--preload` telemetry, SigV4 OTLP logs and **on-demand** `Evaluate` all worked live in AgentCore Runtime on Deno.
+- **Online evaluation produced no results** in the spike window (~37 min after the session, past the 15-minute idle timeout), even after `observability.ts` registered the Strands tracer under the Python scope name `strands.telemetry.tracer` (see the `trace.setGlobalTracerProvider` wrapper). The config was ACTIVE/ENABLED with 100% sampling, and spans and conversation logs were present with the matching `service.name`. Cause unknown; untested, not disproven.
