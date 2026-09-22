@@ -37,6 +37,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Port: toolchain skeleton and shared observability](issues/14-toolchain-skeleton-and-shared-observability.md) — done on branch `typescript-port` (8e6616a): deno.json/lock/.deno-version/setup.sh/tests config + `shared/observability.ts` with tests; check, test, fmt, kernel install and preload all verified
 - [Port: toolkit helpers (memory, identity, gateway, observability, evaluation, policy)](issues/15-toolkit-helpers-memory-identity-gateway-observab.md) — done: 6 helpers + logger + mod.ts (~5.5k lines, 82 tests); 7 Python bugs/differences logged, incl. gateway detach and the span-scope filter
 - [Port: toolkit Runtime helper with CodeBuild deploy](issues/16-toolkit-runtime-helper-with-codebuild-deploy.md) — done: configure/launch/status/invoke with the remote CodeBuild pipeline, generated Deno Dockerfile with `--preload`, requireMMDSV2; adds jszip
+- [Port: notebook 01 and the shared notebook helper](issues/17-notebook-01-and-the-shared-notebook-helper.md) — done: `shared/notebook.ts` (state file, sh, loadEnv, writeFile) + notebook 01 on the Deno kernel; local `.ts` imports do NOT crash the kernel, so no fallback needed
 
 ## Not yet specified
 
