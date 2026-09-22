@@ -28,6 +28,9 @@ export type { CognitoAuthorizerResult, CognitoClientInfo } from "./gateway.ts";
 
 export { PolicyClient } from "./policy.ts";
 
+export { Runtime } from "./runtime.ts";
+export type { ConfigureResult, InvokeOptions, LaunchResult, StatusResult } from "./runtime.ts";
+
 export { ObservabilityClient } from "./observability-client.ts";
 export type { RuntimeLog, Span, TraceData } from "./observability-client.ts";
 

@@ -62,6 +62,7 @@
     "@strands-agents/sdk": "npm:@strands-agents/sdk@1.18.0",
     "bedrock-agentcore/": "npm:/bedrock-agentcore@0.4.4/",
     "googleapis": "npm:googleapis@181.0.0",
+    "jszip": "npm:jszip@3.10.2",
     "playwright": "npm:playwright@1.63.0",
     "zod": "npm:zod@4.6.5"
   }
