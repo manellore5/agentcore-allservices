@@ -1,8 +1,0 @@
-{
-  "agent_name": "travel_companion_basic",
-  "agent_arn": "arn:aws:bedrock-agentcore:us-east-1:362249012325:runtime/travel_companion_basic-px28dj540l",
-  "agent_id": "travel_companion_basic-px28dj540l",
-  "ecr_uri": "362249012325.dkr.ecr.us-east-1.amazonaws.com/bedrock-agentcore-travel_companion_basic",
-  "region": "us-east-1",
-  "status": "READY"
-}

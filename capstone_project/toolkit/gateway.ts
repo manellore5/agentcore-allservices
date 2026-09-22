@@ -238,6 +238,25 @@ export function buildGatewayAccessPolicy(
         Resource: [`${prefix}:gateway/${gatewayName}-*`],
       },
       {
+        // Not in the Python policy, but without it every OpenAPI target fails at call time with
+        // "Failed to fetch outbound api key ... not authorized to perform:
+        // bedrock-agentcore:GetWorkloadAccessToken", then the same for GetResourceApiKey. The
+        // Gateway assumes this role, mints a workload token for itself, and reads the target's
+        // credential provider through it — both against the gateway's own workload identity.
+        // Found on a live run; the credential-provider policy alone is not enough.
+        Sid: "GatewayWorkloadIdentity",
+        Effect: "Allow",
+        Action: [
+          "bedrock-agentcore:GetWorkloadAccessToken",
+          "bedrock-agentcore:GetResourceApiKey",
+          "bedrock-agentcore:GetResourceOauth2Token",
+        ],
+        Resource: [
+          `${prefix}:workload-identity-directory/default`,
+          `${prefix}:workload-identity-directory/default/workload-identity/*`,
+        ],
+      },
+      {
         Sid: "GetConfigurationBundleVersion",
         Effect: "Allow",
         Action: ["bedrock-agentcore:GetConfigurationBundleVersion"],

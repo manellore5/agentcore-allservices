@@ -64,14 +64,15 @@ Deno.test("buildGatewayAccessPolicy scopes GetGateway to the gateway name prefix
   const policy = buildGatewayAccessPolicy("us-east-1", "123456789012", "travelmategateway");
   assertEquals(policy.Statement.map((s) => s.Sid), [
     "GetGateway",
+    "GatewayWorkloadIdentity",
     "GetConfigurationBundleVersion",
   ]);
   assertEquals(policy.Statement[0].Resource, [
     "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/travelmategateway-*",
   ]);
-  assertEquals(policy.Statement[1].Condition?.StringEquals["aws:RequestedRegion"], "us-east-1");
+  assertEquals(policy.Statement[2].Condition?.StringEquals["aws:RequestedRegion"], "us-east-1");
   assertEquals(
-    policy.Statement[1].Condition?.StringEquals["aws:ResourceAccount"],
+    policy.Statement[2].Condition?.StringEquals["aws:ResourceAccount"],
     "${aws:PrincipalAccount}",
   );
 });
@@ -222,4 +223,20 @@ Deno.test("generateRandomId returns the first 8 characters of a UUID", () => {
   const id = GatewayClient.generateRandomId();
   assertEquals(id.length, 8);
   assert(/^[0-9a-f]{8}$/.test(id));
+});
+
+Deno.test("buildGatewayAccessPolicy grants the workload-identity actions a target call needs", () => {
+  // A live run proved the credential-provider policy alone is not enough: the Gateway assumes this
+  // role, mints a workload token, then reads the API key through it.
+  const policy = buildGatewayAccessPolicy("us-east-1", "123456789012", "travelmategateway");
+  const statement = policy.Statement.find((s) => s.Sid === "GatewayWorkloadIdentity")!;
+  assertEquals(statement.Action, [
+    "bedrock-agentcore:GetWorkloadAccessToken",
+    "bedrock-agentcore:GetResourceApiKey",
+    "bedrock-agentcore:GetResourceOauth2Token",
+  ]);
+  assertEquals(statement.Resource, [
+    "arn:aws:bedrock-agentcore:us-east-1:123456789012:workload-identity-directory/default",
+    "arn:aws:bedrock-agentcore:us-east-1:123456789012:workload-identity-directory/default/workload-identity/*",
+  ]);
 });
