@@ -35,6 +35,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Deno toolchain layout mirroring the uv setup](issues/06-deno-toolchain-layout.md) — root `deno.json` + per-agent configs, `shared/` modules copied into build contexts, `.deno-version`, tasks, `setup.sh` steps; `misc/mcp.json` left alone
 - [Porting order and ticket slicing](issues/13-porting-order.md) — 15 port tickets: skeleton, 2 toolkit tickets, one per notebook with its backend files, then tests/README/removal; one branch, Python deleted per slice
 - [Port: toolchain skeleton and shared observability](issues/14-toolchain-skeleton-and-shared-observability.md) — done on branch `typescript-port` (8e6616a): deno.json/lock/.deno-version/setup.sh/tests config + `shared/observability.ts` with tests; check, test, fmt, kernel install and preload all verified
+- [Port: toolkit helpers (memory, identity, gateway, observability, evaluation, policy)](issues/15-toolkit-helpers-memory-identity-gateway-observab.md) — done: 6 helpers + logger + mod.ts (~5.5k lines, 82 tests); 7 Python bugs/differences logged, incl. gateway detach and the span-scope filter
 
 ## Not yet specified
 
