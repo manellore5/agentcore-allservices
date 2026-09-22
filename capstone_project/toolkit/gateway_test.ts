@@ -12,9 +12,9 @@ import {
   GatewayClient,
   getPartition,
   jsonEquals,
-  Logger,
   roleNameFromArn,
 } from "./gateway.ts";
+import { Logger } from "./logger.ts";
 
 Deno.test("getPartition maps a region to its AWS partition", () => {
   assertEquals(getPartition("us-west-2"), "aws");
