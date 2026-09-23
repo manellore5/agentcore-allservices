@@ -288,8 +288,25 @@ export function executionRolePolicy(
           "bedrock-agentcore:GetWorkloadAccessTokenForUserId",
           "bedrock-agentcore:GetResourceOauth2Token",
           "bedrock-agentcore:GetResourceApiKey",
+          // The unified agent of notebook 08 reads the ExchangeRate key back out of its credential
+          // provider, which needs the two provider lookups as well as GetResourceApiKey.
+          "bedrock-agentcore:ListApiKeyCredentialProviders",
+          "bedrock-agentcore:GetApiKeyCredentialProvider",
         ],
         Resource: ["*"],
+      },
+      {
+        // ...and then the secret itself. AgentCore Identity keeps every credential provider's
+        // value in Secrets Manager under `bedrock-agentcore-identity!default/`, so the role is
+        // scoped to that prefix rather than to all secrets. Notebook 08's Python original asks the
+        // learner to add this statement to the role by hand.
+        Sid: "BedrockAgentCoreIdentityGetCredentialProviderSecret",
+        Effect: "Allow",
+        Action: ["secretsmanager:GetSecretValue"],
+        Resource: [
+          `arn:${p}:secretsmanager:${region}:${accountId}:secret:bedrock-agentcore-identity!default/apikey/*`,
+          `arn:${p}:secretsmanager:${region}:${accountId}:secret:bedrock-agentcore-identity!default/oauth2/*`,
+        ],
       },
       {
         Sid: "BedrockModelInvocation",
@@ -975,8 +992,9 @@ function repoRoot(): string {
  * 3. The image is generated from `buildDockerfile()` (Deno base image, `--preload` of the shared
  *    observability module) instead of the toolkit's Jinja `Dockerfile.j2`.
  * 4. The execution-role policy adds `xray:PutSpans`/`PutSpansForIndexing`, needed by the SigV4 OTLP
- *    exporter, plus the code-interpreter, browser and identity actions the course's agents use. The
- *    Python template gates those behind flags the course never sets.
+ *    exporter, plus the code-interpreter, browser and identity actions the course's agents use, and
+ *    the credential-provider lookups plus `secretsmanager:GetSecretValue` that notebook 08 tells the
+ *    learner to add by hand. The Python template gates those behind flags the course never sets.
  * 5. `.dockerignore` filtering is a small fixed list rather than the toolkit's pattern engine; the
  *    agent folders are flat and hold only an entrypoint, a config and helper files.
  * 6. Local container runtimes are not supported: `container_runtime` and the local `docker build`

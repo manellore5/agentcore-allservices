@@ -84,6 +84,35 @@ Deno.test("the execution policy grants the span permissions the SigV4 exporter n
   }
 });
 
+Deno.test("the execution policy lets the agent read an API key back out of its provider", () => {
+  const policy = executionRolePolicy("123456789012", "us-east-1", "unified_travel_agent", "r");
+  const statements = (policy as {
+    Statement: { Sid?: string; Action: string | string[]; Resource: unknown }[];
+  }).Statement;
+
+  // The two provider lookups `IdentityHelper` makes, next to GetResourceApiKey
+  const actions = statements.flatMap((s) => (Array.isArray(s.Action) ? s.Action : [s.Action]));
+  for (
+    const needed of [
+      "bedrock-agentcore:GetResourceApiKey",
+      "bedrock-agentcore:ListApiKeyCredentialProviders",
+      "bedrock-agentcore:GetApiKeyCredentialProvider",
+    ]
+  ) {
+    assert(actions.includes(needed), `missing ${needed}`);
+  }
+
+  // ...and the secret behind it, scoped to the AgentCore Identity prefix only
+  const secrets = statements.find((s) =>
+    s.Sid === "BedrockAgentCoreIdentityGetCredentialProviderSecret"
+  )!;
+  assertEquals(secrets.Action, ["secretsmanager:GetSecretValue"]);
+  assertEquals(secrets.Resource, [
+    "arn:aws:secretsmanager:us-east-1:123456789012:secret:bedrock-agentcore-identity!default/apikey/*",
+    "arn:aws:secretsmanager:us-east-1:123456789012:secret:bedrock-agentcore-identity!default/oauth2/*",
+  ]);
+});
+
 Deno.test("the CodeBuild policy confines S3 access to the source bucket and account", () => {
   const policy = codeBuildRolePolicy(
     "123456789012",
