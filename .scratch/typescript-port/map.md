@@ -48,6 +48,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Port: notebook 09, the observability lab](issues/25-notebook-09-the-observability-lab.md) — done and verified live: 9 spans/2 traces queried back through `ObservabilityClient`, closing the loop from the observability spike
 - [Port: notebook 10, the policy lab](issues/26-notebook-10-the-policy-lab.md) — done and verified live (default-deny + all 4 Cedar allow/deny tests + NL2Cedar + cleanup); found 3 missing Gateway-role permissions that make the Python lab impossible to complete
 - [Port: notebook 11, the evaluations lab](issues/27-notebook-11-the-evaluations-lab.md) — done and verified live: custom evaluator scored the out-of-scope turn Very Poor exactly as taught; found the lab is not re-runnable in Python; online evaluation still unproven
+- [Port: tests, README, and removal of the Python toolchain](issues/28-tests-readme-and-removal-of-the-python-toolchain.md) — done: no Python toolchain remains; clean clone + setup.sh + notebook 01 verified (4/4); sequential 01→11 run deferred to the credentials ticket
 
 ## Not yet specified
 
