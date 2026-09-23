@@ -110,6 +110,13 @@ Click **Select Kernel** in the top right, choose **Jupyter Kernel...**, and pick
 
 Then run the cells. There is no virtual environment to activate: Deno caches dependencies itself.
 
+## How this course was ported to TypeScript
+
+This repository was originally a Python course. For a walkthrough of what changed, how it was
+rebuilt step by step, and the problems found along the way, see
+**[docs/HOW-THIS-PORT-WAS-BUILT.md](docs/HOW-THIS-PORT-WAS-BUILT.md)** — written for someone new to
+the project.
+
 ## Project Structure
 
 ```
