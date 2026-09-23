@@ -260,3 +260,4 @@ code_interpreter_info.json
 capstone_project/backend/browser_tools_info.json
 browser_tools_info.json
 capstone_project/backend/runtime/final_deployment_info.json
+capstone_project/notebooks/eval_results/
