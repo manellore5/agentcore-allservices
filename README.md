@@ -128,17 +128,25 @@ mastering-amazon-bedrock-agentcore/
 │   │   ├── 10-agentcore_policy_lab.ipynb
 │   │   ├── 11-agentcore_evaluations_lab.ipynb
 │   │   └── environments/       # Configuration files
-│   ├── backend/                # Python implementation
+│   ├── backend/                # TypeScript implementation
 │   │   ├── gateway/            # API Gateway setup
 │   │   ├── identity/           # OAuth and authentication
 │   │   ├── memory/             # Memory configuration
 │   │   └── runtime/            # Agent runtime code
+│   ├── toolkit/                # AgentCore helper clients used by the notebooks
+│   ├── shared/                 # Notebook helpers and agent observability
 │   └── README.md               # Project-specific documentation
 ├── tests/                      # Testing utilities
 ├── setup.sh                    # Environment setup script
-├── pyproject.toml              # Python dependencies
+├── deno.json                   # Dependencies, tasks and lint/format settings
+├── deno.lock                   # Locked dependency versions
+├── .deno-version               # Deno version this course is pinned to
 └── README.md                   # This file
 ```
+
+> **Note on `misc/mcp.json`:** that file configures MCP servers for your editor and launches them
+> with `uvx`, a Python tool. It is editor configuration rather than course code, and the AWS
+> documentation MCP server it points at is published for Python only, so it is left as it is.
 
 ## AgentCore Components Covered
 
@@ -181,21 +189,27 @@ After completing this course, you will:
 
 - **Amazon Bedrock AgentCore** - AI agent framework
 - **AWS Services** - Lambda, Cognito, CloudWatch
-- **Python 3.10+** - Primary programming language
-- **Jupyter Notebooks** - Interactive learning environment
+- **TypeScript on Deno** - Primary programming language and runtime
+- **Jupyter Notebooks** - Interactive learning environment, on Deno's own kernel
 - **OAuth 2.0** - Secure authentication
 - **OpenAPI/REST** - API integration
-- **Selenium** - Browser automation
-- **Strands** - Memory management
+- **Playwright** - Browser automation, driving AgentCore's hosted browser
+- **Strands Agents** - Agent framework
 
 ## Testing
 
 The repository includes testing utilities in the `tests/` directory:
 
 ```bash
-# Run API tests
-cd tests
-python api_direct_test.py
+# Unit tests for the toolkit helpers and shared modules
+deno task test
+
+# Type-check, lint and format
+deno task check
+deno task fmt
+
+# Call the third-party APIs directly, bypassing the Gateway
+deno run -A tests/api_direct_test.ts
 ```
 
 See [tests/README.md](tests/README.md) for detailed testing documentation.

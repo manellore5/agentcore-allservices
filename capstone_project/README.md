@@ -4,7 +4,7 @@
 Build a production-ready AI Travel Companion using Amazon Bedrock AgentCore that helps users plan complete travel itineraries with intelligent budget allocation, preference memory, and comprehensive research capabilities.
 
 ## Quick Start
-1. **Prerequisites**: AWS Account, Python 3.9+, Node.js 18+
+1. **Prerequisites**: AWS Account, Deno 2.9+ (see `.deno-version`), VS Code with the Jupyter and Deno extensions
 2. **Setup**: Follow notebooks in order (01-foundation → 11-agentcore_evaluations_lab)
 3. **Deploy**: Use provided CDK templates for AWS deployment
 4. **Monitor**: Access CloudWatch dashboards for observability
@@ -24,7 +24,7 @@ capstone-project/
 │   ├── 09-agentcore_observability_lab.ipynb
 │   ├── 10-agentcore_policy_lab.ipynb
 │   └── 11-agentcore_evaluations_lab.ipynb
-├── backend/                # Python AgentCore implementation
+├── backend/                # TypeScript AgentCore implementation
 ├── frontend/               # TypeScript + React UI
 ├── infrastructure/         # AWS CDK deployment
 ├── docs/                  # Additional documentation

@@ -1,10 +1,16 @@
 {
   "nodeModulesDir": "auto",
-  "compilerOptions": { "strict": true },
+  "compilerOptions": {
+    "strict": true
+  },
   "imports": {
     "@aws-sdk/client-bedrock-agentcore": "npm:@aws-sdk/client-bedrock-agentcore@3.1136.0",
     "@aws-sdk/client-bedrock-agentcore-control": "npm:@aws-sdk/client-bedrock-agentcore-control@3.1136.0",
     "@std/assert": "jsr:@std/assert@1.0.19",
-    "@std/dotenv": "jsr:@std/dotenv@0.225.8"
+    "@std/dotenv": "jsr:@std/dotenv@0.225.8",
+    "@std/path": "jsr:@std/path@1.1.6"
+  },
+  "fmt": {
+    "lineWidth": 100
   }
 }
