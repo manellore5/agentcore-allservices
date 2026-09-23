@@ -43,6 +43,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Port: notebook 04 and memory setup](issues/20-notebook-04-and-memory-setup.md) — done and verified live (memory ACTIVE, 3 strategies, event seeded, extracted preference retrieved); no bugs found in this slice
 - [Port: notebook 05 and the identity runtime](issues/21-notebook-05-and-the-identity-runtime.md) — done; callback server verified live, OAuth2 flow unverified pending Google credentials; `withAccessToken` replaces the decorator, async generator replaces the streaming queue; found a 4th Python bug (credentialProviderId vs Arn)
 - [Port: notebook 06 and code interpreter setup](issues/22-notebook-06-and-code-interpreter-setup.md) — done and verified live (sandbox ran pandas/numpy, 4 agent analyses); rebuilt the never-working setup script on the real session API; fixed `deno fmt` rewriting notebooks and specs
+- [Port: notebook 07 and browser tools setup](issues/23-notebook-07-and-browser-tools-setup.md) — done and verified live (Playwright over CDP to the remote browser works under Deno; agent drove navigate/screenshot/getText/click); rebuilt the second never-working setup script
 
 ## Not yet specified
 
