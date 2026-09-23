@@ -47,6 +47,7 @@ Every Python artifact in the repo — `capstone_project/backend/**`, the 11 note
 - [Port: notebook 08 and the final unified agent](issues/24-notebook-08-and-the-final-unified-agent.md) — done and deployed; memory tools verified live against notebook 04's memory; deployed agents must be self-contained (no toolkit imports); 6 more Python bugs logged
 - [Port: notebook 09, the observability lab](issues/25-notebook-09-the-observability-lab.md) — done and verified live: 9 spans/2 traces queried back through `ObservabilityClient`, closing the loop from the observability spike
 - [Port: notebook 10, the policy lab](issues/26-notebook-10-the-policy-lab.md) — done and verified live (default-deny + all 4 Cedar allow/deny tests + NL2Cedar + cleanup); found 3 missing Gateway-role permissions that make the Python lab impossible to complete
+- [Port: notebook 11, the evaluations lab](issues/27-notebook-11-the-evaluations-lab.md) — done and verified live: custom evaluator scored the out-of-scope turn Very Poor exactly as taught; found the lab is not re-runnable in Python; online evaluation still unproven
 
 ## Not yet specified
 
