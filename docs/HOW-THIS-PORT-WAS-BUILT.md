@@ -2,6 +2,9 @@
 
 *A walkthrough for someone new to the project. No prior knowledge of this repo assumed.*
 
+*Its companion, [HOW-THE-WORK-WAS-PLANNED.md](HOW-THE-WORK-WAS-PLANNED.md), covers how the work was
+organised and why each decision was made.*
+
 ---
 
 ## 1. What is this repository?
