@@ -257,3 +257,5 @@ capstone_project/notebooks/environments/*.json
 # Written by the standalone code interpreter setup script
 capstone_project/backend/code_interpreter_config.json
 code_interpreter_info.json
+capstone_project/backend/browser_tools_info.json
+browser_tools_info.json
