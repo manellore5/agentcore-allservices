@@ -6,12 +6,16 @@
  *
  * Replaces `unified_travel_agent.py`. Tools are declared with `tool({ inputSchema: zod })`, the
  * Gateway is still reached by hand-rolled JSON-RPC over `fetch` (as the Python did, rather than
- * through an MCP client), and memory goes through the course's own `MemoryClient`.
+ * through an MCP client), and memory calls go straight to the AWS SDK (see the note below).
  */
 import { Agent, BedrockModel, tool } from "@strands-agents/sdk";
 import { BedrockAgentCoreApp } from "bedrock-agentcore/runtime";
 import { z } from "zod";
-import { MemoryClient } from "../../../toolkit/mod.ts";
+import {
+  BedrockAgentCoreClient,
+  CreateEventCommand,
+  RetrieveMemoryRecordsCommand,
+} from "@aws-sdk/client-bedrock-agentcore";
 import { IdentityHelper } from "./identity_helper.ts";
 
 // Configuration from environment variables
@@ -30,8 +34,13 @@ const MEMORY_ID = Deno.env.get("MEMORY_ID");
 const MEMORY_USER_ID = Deno.env.get("MEMORY_USER_ID") ?? "default-user";
 const MEMORY_SESSION_ID = Deno.env.get("MEMORY_SESSION_ID") ?? "default-session";
 
-// Initialize tools
-const memoryClient = MEMORY_ID ? new MemoryClient({ region: REGION }) : null;
+// Initialize tools.
+//
+// Memory goes through the AWS SDK directly rather than the course's `toolkit/MemoryClient`: a
+// deployed agent folder is zipped on its own, so it cannot import a module from outside itself.
+// (Python could, because its MemoryClient came from an installed package.) These are the same two
+// API calls that client makes.
+const memoryClient = MEMORY_ID ? new BedrockAgentCoreClient({ region: REGION }) : null;
 const identityHelper = new IdentityHelper(REGION);
 
 /** Internal helper to call MCP gateway tools. */
@@ -136,13 +145,14 @@ const getUserPreferences = tool({
       return "Memory not configured - missing MEMORY_ID environment variable";
     }
     try {
-      const memories = await memoryClient.retrieveMemories({
-        memoryId: MEMORY_ID,
-        namespace: `travel/user/${MEMORY_USER_ID}/preferences`,
-        query: "travel preferences",
-        topK: 5,
-      });
-      const preferences = memories
+      const response = await memoryClient.send(
+        new RetrieveMemoryRecordsCommand({
+          memoryId: MEMORY_ID,
+          namespace: `travel/user/${MEMORY_USER_ID}/preferences`,
+          searchCriteria: { searchQuery: "travel preferences", topK: 5 },
+        }),
+      );
+      const preferences = (response.memoryRecordSummaries ?? [])
         .map((m) => (m.content as { text?: string } | undefined)?.text)
         .filter((text): text is string => Boolean(text));
       return JSON.stringify({ preferences, user_id: MEMORY_USER_ID });
@@ -164,12 +174,15 @@ const saveTravelMemory = tool({
       return "Memory not configured - missing MEMORY_ID environment variable";
     }
     try {
-      await memoryClient.createEvent({
-        memoryId: MEMORY_ID,
-        actorId: MEMORY_USER_ID,
-        sessionId: MEMORY_SESSION_ID,
-        messages: [[content, "ASSISTANT"]],
-      });
+      await memoryClient.send(
+        new CreateEventCommand({
+          memoryId: MEMORY_ID,
+          actorId: MEMORY_USER_ID,
+          sessionId: MEMORY_SESSION_ID,
+          eventTimestamp: new Date(),
+          payload: [{ conversational: { content: { text: content }, role: "ASSISTANT" } }],
+        }),
+      );
       return "Memory saved successfully";
     } catch (error) {
       return `Error saving memory: ${error}`;
