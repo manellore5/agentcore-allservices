@@ -20,7 +20,7 @@ import { IdentityHelper } from "./identity_helper.ts";
 
 // Configuration from environment variables
 const REGION = Deno.env.get("AWS_REGION") ?? "us-east-1";
-const MODEL_ID = Deno.env.get("MODEL_ID") ?? "us.anthropic.claude-haiku-4-5-20251001-v1:0";
+const MODEL_ID = Deno.env.get("MODEL_ID") ?? "us.anthropic.claude-sonnet-4-6";
 
 // Gateway configuration from environment
 const GATEWAY_MCP_ENDPOINT = Deno.env.get("GATEWAY_MCP_ENDPOINT");

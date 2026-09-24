@@ -63,7 +63,7 @@ const getDestinationInfo = tool({
 });
 
 // Initialize model and agent
-const modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
+const modelId = "us.anthropic.claude-sonnet-4-6";
 const model = new BedrockModel({ modelId });
 
 const systemPrompt = `

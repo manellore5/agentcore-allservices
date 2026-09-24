@@ -75,7 +75,7 @@ const saveItineraryToDrive = tool({
 
 // Initialize the agent
 const agent = new Agent({
-  model: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  model: "us.anthropic.claude-sonnet-4-6",
   tools: [saveItineraryToDrive],
   systemPrompt: `
 You are a helpful travel planning assistant with the ability to save itineraries to Google Drive.

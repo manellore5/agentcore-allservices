@@ -10,10 +10,12 @@
  * | `!command`, `subprocess`| `await sh("cmd", ["arg"])`            |
  * | `load_dotenv()`         | `await loadEnv()`                     |
  * | `%%writefile path`      | `await writeFile(path, source)`       |
+ * | tool calls in the output| `traceTools(agent)`                   |
  *
  * `sh()` prints what it captured, because the Deno kernel does not forward a child process's
  * output to the notebook (denoland/deno#20555).
  */
+import { AfterToolCallEvent, type Agent, BeforeToolCallEvent } from "@strands-agents/sdk";
 import { load } from "@std/dotenv";
 import { dirname, fromFileUrl, isAbsolute, join, resolve } from "@std/path";
 
@@ -143,4 +145,54 @@ export async function writeFile(path: string, contents: string): Promise<string>
 /** Formats an API key for display: `********abcd`, or a "not configured" marker. */
 export function maskKey(value: string | undefined): string {
   return value ? `${"*".repeat(8)}${value.slice(-4)}` : "Not configured";
+}
+
+/**
+ * Prints each tool call an agent makes, replacing what the Python kernel showed for free.
+ *
+ * Strands already has a printer for this and enables it by default, but it writes through
+ * `process.stdout.write` (its `getDefaultAppender()` picks that branch because Deno supplies a
+ * Node-compatible `process`). The Deno kernel only forwards `console.log` to the notebook, so
+ * those lines land in the terminal that started Jupyter instead of under the cell — the same
+ * reason `sh()` above re-prints what it captured. The SDK's `AgentPrinter` is not exported, so
+ * this reproduces its tool lines over the public hook API.
+ *
+ * ```ts
+ * traceTools(travelAgent);          // once, after the agent is constructed
+ * await travelAgent.invoke("...");  // 🔧 Tool #1: get_travel_preferences({})
+ * ```
+ *
+ * Returns a function that removes the hooks again; calling `traceTools` twice on one agent
+ * prints every call twice.
+ */
+export function traceTools(agent: Agent, showInput = true): () => void {
+  let calls = 0;
+
+  const cleanups = [
+    agent.addHook(BeforeToolCallEvent, (event) => {
+      calls += 1;
+      const args = showInput ? `(${formatToolInput(event.toolUse.input)})` : "";
+      const denied = event.cancel ? " (denied)" : "";
+      console.log(`🔧 Tool #${calls}: ${event.toolUse.name}${args}${denied}`);
+    }),
+    agent.addHook(AfterToolCallEvent, (event) => {
+      console.log(event.result.status === "success" ? "   ✓ completed" : "   ✗ failed");
+    }),
+  ];
+
+  return () => {
+    for (const cleanup of cleanups) cleanup();
+  };
+}
+
+/** One-line tool arguments, trimmed so a large payload cannot flood the cell. */
+function formatToolInput(input: unknown, limit = 160): string {
+  let text: string;
+  try {
+    text = JSON.stringify(input) ?? String(input);
+  } catch {
+    return "…";
+  }
+  if (text === "{}") return "";
+  return text.length > limit ? `${text.slice(0, limit)}…` : text;
 }
